@@ -52,17 +52,17 @@ export default function EstimateForm({ estimate }: EstimateFormProps) {
   const totalTVA = totalHT * (Number(tvaRate) / 100);
   const totalTTC = totalHT + totalTVA;
 
-  function addMaterialLine(material: Material) {
-    const newLine: EstimateLine = {
+  function addMaterialLines(materials: Material[]) {
+    const newLines = materials.map((material, i) => ({
       designation: material.name,
       quantity: 1,
       unit: material.unit,
       unitPrice: material.unitPrice,
       totalHT: material.unitPrice,
-      order: lines.length,
+      order: lines.length + i,
       materialId: material.id,
-    };
-    setLines([...lines, newLine]);
+    }));
+    setLines([...lines, ...newLines]);
     setShowPicker(false);
   }
 
@@ -303,7 +303,7 @@ export default function EstimateForm({ estimate }: EstimateFormProps) {
             <DialogTitle>Ajouter une ligne</DialogTitle>
           </DialogHeader>
           <MaterialPicker
-            onSelect={addMaterialLine}
+            onSelectMultiple={addMaterialLines}
             onCustomLine={addCustomLine}
             onClose={() => setShowPicker(false)}
           />

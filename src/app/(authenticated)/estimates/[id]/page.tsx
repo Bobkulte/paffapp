@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import { Estimate, EstimateStatus, STATUS_LABELS, STATUS_COLORS } from '@/models
 
 export default function EstimateDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const [estimate, setEstimate] = useState<Estimate | null>(null);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState(false);
@@ -89,6 +90,17 @@ export default function EstimateDetailPage() {
               onClick={() => window.open(`/api/estimates/${params.id}/pdf`, '_blank')}
             >
               Télécharger PDF
+            </Button>
+            <Button
+              variant="outline"
+              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+              onClick={async () => {
+                if (!confirm('Supprimer ce devis ? Cette action est irréversible.')) return;
+                const res = await fetch(`/api/estimates/${params.id}`, { method: 'DELETE' });
+                if (res.ok) router.push('/dashboard');
+              }}
+            >
+              Supprimer
             </Button>
           </div>
         </div>

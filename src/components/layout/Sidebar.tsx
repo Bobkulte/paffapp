@@ -9,7 +9,6 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: '📊' },
   { name: 'Matériaux', href: '/materials', icon: '🔩' },
   { name: 'Nouveau devis', href: '/estimates/new', icon: '➕' },
-  { name: 'Mes devis', href: '/estimates', icon: '📋' },
   { name: 'Paramètres', href: '/settings', icon: '⚙️' },
 ];
 
