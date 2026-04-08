@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// ============================================================
+// Better Auth tables
+// ============================================================
+
+model User {
+  id            String    @id
+  name          String?
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts  Account[]
+  sessions  Session[]
+  estimates Estimate[]
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  idToken               String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+// ============================================================
+// App tables
+// ============================================================
+
+model Material {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  unit        String
+  unitPrice   Float
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  estimateLines EstimateLine[]
+}
+
+model CompanyInfo {
+  id        String  @id @default(cuid())
+  name      String
+  address   String?
+  city      String?
+  zipCode   String?
+  phone     String?
+  email     String?
+  siret     String?
+  tvaNumber String?
+  logo      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Estimate {
+  id             String    @id @default(cuid())
+  reference      String    @unique
+  status         String    @default("DRAFT")
+  clientName     String
+  clientEmail    String?
+  clientPhone    String?
+  clientAddress  String?
+  clientCity     String?
+  clientZipCode  String?
+  date           DateTime  @default(now())
+  validityDate   DateTime?
+  tvaRate        Float     @default(20)
+  notes          String?
+  totalHT        Float     @default(0)
+  totalTVA       Float     @default(0)
+  totalTTC       Float     @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  lines EstimateLine[]
+}
+
+model EstimateLine {
+  id          String  @id @default(cuid())
+  designation String
+  quantity    Float
+  unit        String
+  unitPrice   Float
+  totalHT     Float
+  order       Int     @default(0)
+
+  estimateId String
+  estimate   Estimate @relation(fields: [estimateId], references: [id], onDelete: Cascade)
+
+  materialId String?
+  material   Material? @relation(fields: [materialId], references: [id], onDelete: SetNull)
+}
