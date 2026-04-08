@@ -6,15 +6,17 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Créer l'utilisateur admin par défaut (Better Auth schema)
+  const adminEmail = process.env.ADMIN_EMAIL || 'admin@makemyestimate.fr';
+  const adminPassword = process.env.ADMIN_PASSWORD || 'admin123';
   const userId = randomUUID();
-  const hashedPassword = await bcrypt.hash('admin123', 12);
+  const hashedPassword = await bcrypt.hash(adminPassword, 12);
 
   await prisma.user.upsert({
-    where: { email: 'admin@makemyestimate.fr' },
+    where: { email: adminEmail },
     update: {},
     create: {
       id: userId,
-      email: 'admin@makemyestimate.fr',
+      email: adminEmail,
       name: 'Administrateur',
       emailVerified: true,
     },
@@ -22,7 +24,7 @@ async function main() {
 
   // Créer le compte credential lié à l'utilisateur
   const existingUser = await prisma.user.findUnique({
-    where: { email: 'admin@makemyestimate.fr' },
+    where: { email: adminEmail },
   });
 
   if (existingUser) {

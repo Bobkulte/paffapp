@@ -40,3 +40,14 @@ prisma/dev.db-journal
 
 # Zone.Identifier files (WSL)
 *.Zone.Identifier
+
+# Claude Code / AI assistant files
+.claude/
+.agents/
+CLAUDE.md
+
+# Session notes (kept in ~/ClaudeConv)
+markdown/
+
+# Local credentials
+.credentials
