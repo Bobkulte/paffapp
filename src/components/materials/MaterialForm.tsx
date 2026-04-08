@@ -61,7 +61,7 @@ export default function MaterialForm({ material, onSubmit, onCancel }: MaterialF
 
       <div className="space-y-2">
         <Label>Catégorie</Label>
-        <Select value={category} onValueChange={setCategory}>
+        <Select value={category} onValueChange={(v) => v && setCategory(v)}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
@@ -75,7 +75,7 @@ export default function MaterialForm({ material, onSubmit, onCancel }: MaterialF
 
       <div className="space-y-2">
         <Label>Unité</Label>
-        <Select value={unit} onValueChange={setUnit}>
+        <Select value={unit} onValueChange={(v) => v && setUnit(v)}>
           <SelectTrigger>
             <SelectValue />
           </SelectTrigger>
